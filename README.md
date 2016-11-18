@@ -19,3 +19,5 @@ LocationListener will give you a call back <b><i>onLocationChanged</i></b> with 
 You can get the latitude by calling getLatitude() method on the location object
 
 You can get the longitude by calling getLongitude() method on the location object
+
+Note: You will get the location only if gps is on. For a tutorial on how to programmatically switch on gps refer <a href="https://github.com/Rohan-Kumar/Enable-GPS" target="_blank"> this </a>
