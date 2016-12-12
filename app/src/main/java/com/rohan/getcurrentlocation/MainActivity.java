@@ -2,6 +2,8 @@ package com.rohan.getcurrentlocation;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +21,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     LocationRequest locationRequest;
@@ -95,7 +101,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     public void onLocationChanged(Location location) {
                         double lat = location.getLatitude();
                         double lon = location.getLongitude();
-                        textView.setText("Latitude:" + lat + "\nLongitude:" + lon);
+
+                        String fullAddress = "";
+                        try {
+                            Geocoder geocoder;
+                            List<Address> addresses;
+                            geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+                            addresses = geocoder.getFromLocation(lat, lon, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+                            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                            String city = addresses.get(0).getLocality();
+                            String state = addresses.get(0).getAdminArea();
+                            String country = addresses.get(0).getCountryName();
+                            String postalCode = addresses.get(0).getPostalCode();
+
+                            fullAddress = address + ", " + city + ", " + state + ", " + country + ", " + postalCode;
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        textView.setText("Latitude:" + lat + "\nLongitude:" + lon + "\nAddress:" + fullAddress);
+
                     }
                 });
     }
